@@ -20,10 +20,40 @@ export const createExpense = async (req, res) => {
 
 export const getExpenses = async (req, res) => {
   try {
-    const expenses = await Expense.find({ user: req.userId }).sort({ createdAt: -1 });
-    res.json({ success: true, expenses });
+    const { today } = req.query;
+    let filter = { user: req.userId };
+
+    if (today === "true") {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+
+      filter.date = { $gte: startOfDay, $lte: endOfDay };
+    }
+
+    const expenses = await Expense.find(filter).sort({ createdAt: -1 });
+
+    let totalAmount = 0;
+    if (today === "true") {
+      totalAmount = expenses.reduce(
+        (sum, expense) => sum + Number(expense.amount),
+        0
+      );
+    }
+
+    res.json({
+      success: true,
+      expenses,
+      ...(today === "true" && { totalAmount }),
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to fetch expenses', error: err.message });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch expenses",
+      error: err.message,
+    });
   }
 };
 
