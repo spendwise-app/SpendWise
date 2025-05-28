@@ -44,9 +44,7 @@ export const login = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid password" });
+      return res.json({ success: false, message: "Invalid password" });
 
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: "30d",
