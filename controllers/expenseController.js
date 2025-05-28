@@ -20,7 +20,7 @@ export const createExpense = async (req, res) => {
 
 export const getExpenses = async (req, res) => {
   try {
-    const expenses = await Expense.find({ user: req.userId }).sort({ createdAt: 1 });
+    const expenses = await Expense.find({ user: req.userId }).sort({ createdAt: -1 });
     res.json({ success: true, expenses });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch expenses', error: err.message });
