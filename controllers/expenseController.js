@@ -85,7 +85,17 @@ export const deleteExpense = async (req, res) => {
 
 export const filterExpenses = async (req, res) => {
   try {
-    const { category, startDate, endDate, minAmount, maxAmount, groupByCategory, sortBy, order } = req.query;
+    const {
+      category,
+      startDate,
+      endDate,
+      date,
+      minAmount,
+      maxAmount,
+      groupByCategory,
+      sortBy,
+      order,
+    } = req.query;
 
     const userId = new mongoose.Types.ObjectId(String(req.userId));
     const filter = { user: userId };
@@ -102,6 +112,11 @@ export const filterExpenses = async (req, res) => {
       filter.date = { $gte: new Date(startDate) };
     } else if (endDate) {
       filter.date = { $lte: new Date(endDate) };
+    } else if (date) {
+      const targetDate = new Date(date);
+      const startOfDate = new Date(targetDate.setHours(0, 0, 0, 0));
+      const endOfDate = new Date(targetDate.setHours(23, 59, 59, 999));
+      filter.date = { $gte: startOfDate, $lte: endOfDate };
     }
 
     // Filter by amount range
@@ -113,19 +128,19 @@ export const filterExpenses = async (req, res) => {
 
     let grouped;
 
-    if (groupByCategory === 'true') {
+    if (groupByCategory === "true") {
       grouped = await Expense.aggregate([
         { $match: filter },
         {
           $group: {
-            _id: '$category',
-            totalAmount: { $sum: '$amount' },
+            _id: "$category",
+            totalAmount: { $sum: "$amount" },
             count: { $sum: 1 },
           },
         },
         {
-          $sort: { totalAmount: order === 'desc' ? -1 : 1 }
-        }
+          $sort: { totalAmount: order === "desc" ? -1 : 1 },
+        },
       ]);
 
       // return res.json({ success: true, grouped });
@@ -134,18 +149,23 @@ export const filterExpenses = async (req, res) => {
     // Sorting
     let sort = {};
     if (sortBy) {
-      sort[sortBy] = order === 'desc' ? -1 : 1;
+      sort[sortBy] = order === "desc" ? -1 : 1;
     } else {
       sort.date = -1; // default: newest first
     }
 
     const expenses = await Expense.find(filter).sort(sort);
-    const total  = expenses.reduce((sum, i) => sum + i.amount, 0)
+    const total = expenses.reduce((sum, i) => sum + i.amount, 0);
 
-
-    res.json({ success: true, count: expenses.length, total, grouped, expenses });
+    res.json({
+      success: true,
+      count: expenses.length,
+      total,
+      grouped,
+      expenses,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
