@@ -20,7 +20,8 @@ const allowedOrigins = [
   'http://127.0.0.1:5000',
   "http://localhost:5173",
   'https://expense-14.deno.dev',
-  'https://spendwise.deno.dev'
+  'https://spendwise.deno.dev',
+  'https://spendwise-web.deno.dev'
 ];
 
 app.use(cors({
