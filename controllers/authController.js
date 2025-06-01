@@ -43,6 +43,7 @@ export const login = async (req, res) => {
       return res.json({ success: false, message: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(password, user.password);
+    user.password = undefined;
     if (!isMatch)
       return res.json({ success: false, message: "Invalid password" });
 
@@ -60,7 +61,7 @@ export const login = async (req, res) => {
     res.json({
       success: true,
       message: "Login successful",
-      user: { id: user._id, name: user.name, email: user.email },
+      user
     });
   } catch (err) {
     res

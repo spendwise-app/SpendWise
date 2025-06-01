@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    currency: {
+      type: String,
+      default: "₹"
+    },
     resetOTP: String,
     otpExpires: Date,
   },
