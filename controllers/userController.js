@@ -17,7 +17,7 @@ export const getUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     try{
-        const { name, getSummary, dailyLimit } = req.body;
+        const { name, getSummary, dailyLimit, currency } = req.body;
 
         const user = await User.findById(req.userId, "-password");
 
@@ -28,6 +28,7 @@ export const updateUser = async (req, res) => {
         if(name) user.name = name;
         if(getSummary) user.getSummary = getSummary;
         if(dailyLimit) user.dailyLimit = dailyLimit;
+        if(currency) user.currency = currency;
 
         await user.save();
 
