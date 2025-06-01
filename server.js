@@ -16,10 +16,29 @@ connectDB();
 
 const app = express();
 
-app.use(cors({
-    origin: "http://localhost:5173",
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5000",
+  "https://spendwise.deno.dev",
+  "https://spendwise-web.deno.dev"
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-}));
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 
