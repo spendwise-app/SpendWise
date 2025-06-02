@@ -26,7 +26,7 @@ export const updateUser = async (req, res) => {
         }
 
         if(name) user.name = name;
-        if(getSummary) user.getSummary = getSummary;
+        if (getSummary !== undefined) user.getSummary = getSummary;
         if(dailyLimit) user.dailyLimit = dailyLimit;
         if(currency) user.currency = currency;
 
