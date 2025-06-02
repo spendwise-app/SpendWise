@@ -21,7 +21,8 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://127.0.0.1:5000",
   "https://spendwise.deno.dev",
-  "https://spendwise-web.deno.dev"
+  "https://spendwise-web.deno.dev",
+  "http://192.168.1.71.5174"
 ];
 
 app.use(
