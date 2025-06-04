@@ -5,6 +5,7 @@ import connectDB from "./config/db.js"
 import authRoutes from './routes/authRoutes.js'
 import expenseRoutes from './routes/expenseRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import borrowLendRoutes from './routes/borrowLendRoutes.js'
 import cookieParser from 'cookie-parser';
 import './utilities/weeklySummary.js'
 import './utilities/sleepPreventer.js'
@@ -46,6 +47,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/user', userRoutes)
+app.use('/api/borrowlend', borrowLendRoutes)
 
 app.get("/ping", (req, res) => {
     res.json({message: "Pinged"})
