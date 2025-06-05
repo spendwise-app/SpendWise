@@ -63,3 +63,20 @@ export const rejectRequest = async (req, res) => {
   res.json({ message: "Friend request rejected" });
 };
 
+
+export const myFriendsData = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId)
+      .populate("friends", "name email") 
+      .populate("pendingRequests", "name email");
+
+    res.json({
+      friends: user.friends,
+      pendingRequests: user.pendingRequests,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+
