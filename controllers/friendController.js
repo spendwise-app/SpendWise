@@ -67,16 +67,18 @@ export const rejectRequest = async (req, res) => {
 export const myFriendsData = async (req, res) => {
   try {
     const user = await User.findById(req.userId)
-      .populate("friends", "name email") 
-      .populate("pendingRequests", "name email");
+      .populate("friends", "name email")
+      .populate("friendRequests", "name email")
+      .populate("sentRequests", "name email");
 
     res.json({
       friends: user.friends,
-      pendingRequests: user.pendingRequests,
+      friendRequests: user.friendRequests,
+      sentRequests: user.sentRequests,
     });
   } catch (err) {
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Failed to fetch friend data" });
   }
-};
+}
 
 
