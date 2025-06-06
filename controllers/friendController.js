@@ -35,17 +35,18 @@ export const acceptRequest = async (req, res) => {
 
   // Update both users
   receiver.friends.push(senderId);
-  receiver.friendRequests = receiver.friendRequests.filter(id => id != senderId);
+  receiver.friendRequests = receiver.friendRequests.filter(
+    (id) => id != senderId
+  );
 
   sender.friends.push(receiverId);
-  sender.sentRequests = sender.sentRequests.filter(id => id != receiverId);
+  sender.sentRequests = sender.sentRequests.filter((id) => id != receiverId);
 
   await receiver.save();
   await sender.save();
 
   res.json({ message: "Friend request accepted" });
 };
-
 
 export const rejectRequest = async (req, res) => {
   const senderId = req.params.id;
@@ -54,15 +55,16 @@ export const rejectRequest = async (req, res) => {
   const receiver = await User.findById(receiverId);
   const sender = await User.findById(senderId);
 
-  receiver.friendRequests = receiver.friendRequests.filter(id => id != senderId);
-  sender.sentRequests = sender.sentRequests.filter(id => id != receiverId);
+  receiver.friendRequests = receiver.friendRequests.filter(
+    (id) => id != senderId
+  );
+  sender.sentRequests = sender.sentRequests.filter((id) => id != receiverId);
 
   await receiver.save();
   await sender.save();
 
   res.json({ message: "Friend request rejected" });
 };
-
 
 export const myFriendsData = async (req, res) => {
   try {
@@ -79,7 +81,7 @@ export const myFriendsData = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch friend data" });
   }
-}
+};
 
 export const deleteFriend = async (req, res) => {
   const userId = req.userId;
@@ -87,11 +89,11 @@ export const deleteFriend = async (req, res) => {
 
   try {
     await User.findByIdAndUpdate(userId, {
-      $pull: { friends: friendId }
+      $pull: { friends: friendId },
     });
 
     await User.findByIdAndUpdate(friendId, {
-      $pull: { friends: userId }
+      $pull: { friends: userId },
     });
 
     res.json({ message: "Friend removed successfully" });
@@ -100,5 +102,71 @@ export const deleteFriend = async (req, res) => {
   }
 };
 
+
+export const sentPayment = async (req, res) => {
+  try {
+    const receiverId = req.params.id;
+    const friend = req.userId
+    const { amount, title, name, id } = req.body;
+
+    const receiver = await User.findById(receiverId);
+    if (!receiver) {
+      return res.json({ success: false, message: "Receiver not found" });
+    }
+
+   
+    const alreadyExists = receiver.inbox.some(
+      (entry) => entry.id.toString() === id && entry.name === name
+    );
+
+    if (alreadyExists) {
+      return res.json({
+        success: false,
+        message: "Payment message already send",
+      });
+    }
+
+    receiver.inbox.push({ name, amount, title, id, friend });
+    await receiver.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Payment message sent to inbox",
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to send payment message",
+      error: err.message,
+    });
+  }
+};
+
+
+export const getInbox = async (req, res) => {
+  try {
+    const userId = req.userId; 
+
+    const user = await User.findById(userId).select("inbox");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      inbox: user.inbox,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to get inbox",
+      error: err.message,
+    });
+  }
+};
 
 

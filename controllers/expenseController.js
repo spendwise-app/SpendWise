@@ -1,5 +1,6 @@
 import Expense from "../models/expenseModel.js";
 import mongoose from "mongoose";
+import User from "../models/userModel.js";
 
 export const createExpense = async (req, res) => {
   try {
@@ -224,5 +225,58 @@ export const sharedExpenses = async (req, res) => {
     res.json({ success: true, shared });
   } catch (err) {
     res.json({ success: false, message: err.message });
+  }
+};
+
+
+
+export const acceptPaymentRequest = async (req, res) => {
+  try {
+    const expenseId = req.params.id;
+    const userId = req.userId;
+    const { friend } = req.body;
+
+    const expense = await Expense.findById(expenseId);
+    if (!expense) {
+      return res.status(404).json({ success: false, message: "Expense not found" });
+    }
+
+    const sharedEntry = expense.sharedWith.find((entry) =>
+      entry.friend.toString() === friend.toString()
+    );
+
+    if (!sharedEntry) {
+      return res.status(400).json({ success: false, message: "You are not part of this expense" });
+    }
+
+    sharedEntry.paid = true;
+    await expense.save();
+
+    await User.findByIdAndUpdate(userId, {
+      $pull: {
+        inbox: { id: expenseId }
+      }
+    });
+
+    res.status(200).json({ success: true, message: "Payment confirmed and inbox updated" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const rejectPaymentRequest = async (req, res) => {
+  try {
+    const expenseId = req.params.id;
+    const userId = req.userId;
+
+    await User.findByIdAndUpdate(userId, {
+      $pull: {
+        inbox: { id: expenseId }
+      }
+    });
+
+    res.status(200).json({ success: true, message: "Payment cancelled" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };

@@ -49,6 +49,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: ""
     },
+    inbox: [
+      {
+        name: String,
+        amount: { type: Number, default: 0},
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "Expense"},
+        title: String,
+        friend: { type:  mongoose.Schema.Types.ObjectId, ref: "User" }
+      }
+    ],
 
     resetOTP: String,
     otpExpires: Date,
