@@ -45,6 +45,10 @@ const userSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    upiId: {
+      type: String,
+      default: ""
+    },
 
     resetOTP: String,
     otpExpires: Date,

@@ -4,7 +4,8 @@ import {
   getExpenses,
   updateExpense,
   deleteExpense,
-  filterExpenses
+  filterExpenses,
+  sharedExpenses
 } from '../controllers/expenseController.js';
 import authMiddleware from '../middlewares/auth.js';
 
@@ -17,5 +18,6 @@ router.get('/', getExpenses);
 router.put('/:id', updateExpense);
 router.delete('/:id', deleteExpense);
 router.get('/filter', filterExpenses);
+router.get('/shared', sharedExpenses)
 
 export default router;
