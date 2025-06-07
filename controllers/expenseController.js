@@ -51,7 +51,7 @@ export const getExpenses = async (req, res) => {
       filter.date = { $gte: startOfDay, $lte: endOfDay };
     }
 
-    const expenses = await Expense.find(filter).sort({ createdAt: -1 });
+    const expenses = await Expense.find(filter).sort({ date: -1 });
 
     let totalAmount = 0;
     if (today === "true") {
@@ -227,8 +227,6 @@ export const sharedExpenses = async (req, res) => {
     res.json({ success: false, message: err.message });
   }
 };
-
-
 
 export const acceptPaymentRequest = async (req, res) => {
   try {
