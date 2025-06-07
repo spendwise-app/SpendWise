@@ -273,7 +273,7 @@ export const rejectPaymentRequest = async (req, res) => {
       }
     });
 
-    res.status(200).json({ success: true, message: "Payment cancelled" });
+    res.status(200).json({ success: true, message: "Request rejected" });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
