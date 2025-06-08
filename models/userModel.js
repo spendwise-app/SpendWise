@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
     dailyLimit: {
       type: Number,
-      default: 0,
+      default: 100,
     },
     currency: {
       type: String,
