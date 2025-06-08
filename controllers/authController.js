@@ -5,6 +5,7 @@ import sendOTPEmail from "../utilities/sendOTPEmail .js";
 import crypto from "crypto";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret1234secret";
+const isProd = process.env.NODE_ENV === "production";
 
 export const register = async (req, res) => {
   try {
@@ -53,8 +54,8 @@ export const login = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      secure: isProd,
+      sameSite: isProd ? "None" : "Lax",
       maxAge: 24 * 60 * 60 * 1000 * 30, //30 day
     });
 
@@ -134,8 +135,8 @@ export const resetPassword = async (req, res) => {
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
   });
   res.json({ success: true, message: "Logged out successfully" });
 };
