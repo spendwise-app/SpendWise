@@ -210,7 +210,7 @@ export const sharedExpenses = async (req, res) => {
   try {
     const expenses = await Expense.find({
       "sharedWith.friend": req.userId,
-    }).select("-__v").populate("createdBy", "name email upiId");
+    }).select("-__v").populate("createdBy", "name email upiId").sort({date: -1});
 
     const shared = expenses.map((expense) => {
       const userShare = expense.sharedWith.filter(
@@ -232,7 +232,7 @@ export const acceptPaymentRequest = async (req, res) => {
   try {
     const expenseId = req.params.id;
     const userId = req.userId;
-    const { friend } = req.body;
+    const { friend, amount } = req.body;
 
     const expense = await Expense.findById(expenseId);
     if (!expense) {
@@ -247,8 +247,22 @@ export const acceptPaymentRequest = async (req, res) => {
       return res.status(400).json({ success: false, message: "You are not part of this expense" });
     }
 
+    const friendExpense = new Expense({
+      user: friend,
+      title: expense.title,
+      amount,
+      category: expense.category,
+      date: expense.date,
+      createdBy: userId,
+      sharedWith: [],
+    });
+
+
     sharedEntry.paid = true;
+    expense.amount = expense.amount - amount;
+    await friendExpense.save();
     await expense.save();
+
 
     await User.findByIdAndUpdate(userId, {
       $pull: {
