@@ -27,6 +27,7 @@ const allowedOrigins = [
   "https://spendwise-app.deno.dev",
   "http://192.168.1.71:5174",
   "https://spendwise25.netlify.app",
+  "https://spendwise-web.netlify.app"
 ];
 
 app.use(
