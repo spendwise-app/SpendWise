@@ -13,10 +13,15 @@ export const sendRequest = async (req, res) => {
   )
     return res.status(400).json({ message: "Already requested or friends" });
 
+  const sender = await User.findById(senderId);
+
+  if(sender.email == receiver.email){
+    return res.json({ message: "Can't be friend with your own" });
+  }
+
   receiver.friendRequests.push(senderId);
   await receiver.save();
 
-  const sender = await User.findById(senderId);
   sender.sentRequests.push(receiver._id);
   await sender.save();
 
@@ -102,11 +107,10 @@ export const deleteFriend = async (req, res) => {
   }
 };
 
-
 export const sentPayment = async (req, res) => {
   try {
     const receiverId = req.params.id;
-    const friend = req.userId
+    const friend = req.userId;
     const { amount, title, name, id } = req.body;
 
     const receiver = await User.findById(receiverId);
@@ -114,7 +118,6 @@ export const sentPayment = async (req, res) => {
       return res.json({ success: false, message: "Receiver not found" });
     }
 
-   
     const alreadyExists = receiver.inbox.some(
       (entry) => entry.id.toString() === id && entry.name === name
     );
@@ -133,7 +136,6 @@ export const sentPayment = async (req, res) => {
       success: true,
       message: "Payment message sent to inbox",
     });
-
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -143,10 +145,9 @@ export const sentPayment = async (req, res) => {
   }
 };
 
-
 export const getInbox = async (req, res) => {
   try {
-    const userId = req.userId; 
+    const userId = req.userId;
 
     const user = await User.findById(userId).select("inbox");
     if (!user) {
@@ -168,5 +169,3 @@ export const getInbox = async (req, res) => {
     });
   }
 };
-
-
