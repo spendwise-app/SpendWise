@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "₹",
     },
+    verified: {
+      type: Boolean,
+      default: false
+    },
     friends: [
       {
         type: mongoose.Schema.Types.ObjectId,
