@@ -7,6 +7,7 @@ import expenseRoutes from "./routes/expenseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import borrowLendRoutes from "./routes/borrowLendRoutes.js";
 import friendRoutes from "./routes/friendRoutes.js"
+import feedbackRoute from "./routes/feedbackRoute.js"
 import cookieParser from "cookie-parser";
 import "./utilities/weeklySummary.js";
 import "./utilities/sleepPreventer.js";
@@ -51,6 +52,7 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/borrowlend", borrowLendRoutes);
 app.use("/api/friend", friendRoutes)
+app.use("/api/feedback", feedbackRoute);
 
 app.get("/ping", (req, res) => {
   res.json({ message: "Pinged" });
