@@ -34,7 +34,7 @@ export const register = async (req, res) => {
   .status(201)
   .json({
     success: true,
-    message: "User registered successfully. A verification email has been sent. Please verify your email before logging in."
+    message: "Registered successfully. Check your email to verify before login."
   });
 
   } catch (err) {
