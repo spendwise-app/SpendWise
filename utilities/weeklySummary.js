@@ -41,7 +41,7 @@ const sendWeeklySummaries = async () => {
     })), total);
 
     await transporter.sendMail({
-      from: process.env.EMAIL,
+      from: '"SpendWise" <expense.pilot.app@gmail.com>',
       to: user.email,
       subject: 'Your Weekly Expense Summary',
       html,
