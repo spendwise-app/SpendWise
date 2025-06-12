@@ -4,7 +4,7 @@ const sendVerificationMail = async (token, userEmail) => {
   const verificationUrl = `https://spendwise-web.onrender.com/api/auth/${token}`;
 
   const mailOptions = {
-    from: '"SpendWise" <expense.pilot.app@gmail.com>',
+    from: process.env.EMAIL_USER,
     to: userEmail,
     subject: "Verify Your Email - SpendWise",
     html: `
