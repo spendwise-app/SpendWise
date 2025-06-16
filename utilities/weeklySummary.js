@@ -3,13 +3,13 @@ import User from '../models/userModel.js';
 import Expense from '../models/expenseModel.js';
 import transporter from './transporter.js';
 import { generateWeeklySummaryEmail } from './templates.js';
+import { DateTime } from 'luxon';
 
 const getStartAndEndOfWeek = () => {
-  const today = new Date();
-  const start = new Date(today.setDate(today.getDate() - today.getDay())); 
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6); 
-  return { start, end };
+  const now = DateTime.now().setZone('Asia/Kolkata');
+  const start = now.startOf('week').startOf('day');
+  const end = start.plus({ days: 6 }).endOf('day');
+  return { start: start.toJSDate(), end: end.toJSDate() };
 };
 
 const sendWeeklySummaries = async () => {
