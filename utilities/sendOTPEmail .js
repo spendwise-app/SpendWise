@@ -6,7 +6,7 @@ const EMAIL = process.env.EMAIL_USER
 
 const sendOTPEmail = async (toEmail, otp) => {
   const mailOptions = {
-    from: `"SpendWise" <${.EMAIL}>`,
+    from: `"SpendWise" <${EMAIL}>`,
     to: toEmail,
      subject: '🔐 Your OTP Code',
     html: otpTemplate(otp),
