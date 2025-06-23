@@ -1,4 +1,4 @@
-import { subscriptions, webpush } from "../config/webpush";
+import { subscriptions, webpush } from "../config/webpush.js";
 
 const sendPushNotification = async (userId, title, body) => {
   const subscription = subscriptions[userId];
