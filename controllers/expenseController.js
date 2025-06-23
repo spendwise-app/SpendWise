@@ -27,7 +27,7 @@ export const createExpense = async (req, res) => {
     const user = await User.findById(req.userId).select("name"); 
 
     await Promise.all(
-      sharedWithData.map(async ({ friend }) => {
+      sharedWithData.map(async ({ friend, amount }) => {
         try {
           await sendPushNotification(
             friend,
