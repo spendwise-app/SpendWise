@@ -24,7 +24,7 @@ export const createExpense = async (req, res) => {
     });
     await newExpense.save();
 
-    const userName = await User.findById(req.userId).select("name"); 
+    const user = await User.findById(req.userId).select("name"); 
 
     await Promise.all(
       sharedWithData.map(async ({ friend }) => {
@@ -32,7 +32,7 @@ export const createExpense = async (req, res) => {
           await sendPushNotification(
             friend,
             "New Shared Expense",
-            `${userName} has shared an expense with you for ${amount}.`
+            `${user.name || "A User"} has shared an expense with you for ${amount}.`
           );
         } catch (notificationError) {
           console.error(`Failed to send notification to user ${friend}:`, notificationError);
