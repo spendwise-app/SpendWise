@@ -23,6 +23,17 @@ export const createExpense = async (req, res) => {
       sharedWith: sharedWithData,
     });
     await newExpense.save();
+
+    await Promise.all(
+      sharedWithData.map(async ({ friend }) => {
+        await sendPushNotification(
+          friend,
+          "New Shared Expense",
+          `An expense titled "${title}" has been shared with you.`
+        );
+      })
+    );
+
     res.status(201).json({
       success: true,
       message: "Expense created successfully",
