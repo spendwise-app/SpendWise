@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import sendPushNotification from "../utilities/sendPushNotification.js";
 
 export const sendRequest = async (req, res) => {
   const { email } = req.params;
@@ -15,7 +16,7 @@ export const sendRequest = async (req, res) => {
 
   const sender = await User.findById(senderId);
 
-  if(sender.email == receiver.email){
+  if (sender.email == receiver.email) {
     return res.json({ message: "Can't be friend with your own" });
   }
 
@@ -24,6 +25,16 @@ export const sendRequest = async (req, res) => {
 
   sender.sentRequests.push(receiver._id);
   await sender.save();
+
+  try {
+    await sendPushNotification(
+      receiver._id,
+      "New Friend Request",
+      `You have a new friend request from ${sender?.name}`
+    );
+  } catch (err) {
+    console.log(`Push notification error: ${err.message}`);
+  }
 
   res.json({ message: "Friend request sent" });
 };
@@ -131,6 +142,17 @@ export const sentPayment = async (req, res) => {
 
     receiver.inbox.push({ name, amount, title, id, friend });
     await receiver.save();
+
+    try {
+      const user = await User.findById(req.userId).select("name");
+      await sendPushNotification(
+        receiver._id,
+        "Payment request",
+        `${user.name} has sent you a payment request`
+      );
+    } catch (err) {
+      console.log(`Push notification error: ${err.message}`);
+    }
 
     res.status(200).json({
       success: true,
