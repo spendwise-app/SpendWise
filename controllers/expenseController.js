@@ -1,6 +1,7 @@
 import Expense from "../models/expenseModel.js";
 import mongoose from "mongoose";
 import User from "../models/userModel.js";
+import sendPushNotification from "../utilities/sendPushNotification.js";
 
 export const createExpense = async (req, res) => {
   try {
@@ -221,6 +222,12 @@ export const sharedExpenses = async (req, res) => {
         sharedWith: userShare,
       };
     });
+
+    await sendPushNotification(
+      req.userId,
+      "Shared Expense Alert",
+      `You have ${shared.length} shared expense(s).`
+    );
 
     res.json({ success: true, shared });
   } catch (err) {
