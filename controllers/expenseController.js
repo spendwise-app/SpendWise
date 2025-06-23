@@ -225,7 +225,7 @@ export const sharedExpenses = async (req, res) => {
 
 
 await Promise.all(
-  expense.sharedWith.map(async ({ friend }) => {
+  shared.sharedWith.map(async ({ friend }) => {
     await sendPushNotification(
       friend,
       "New Shared Expense",
