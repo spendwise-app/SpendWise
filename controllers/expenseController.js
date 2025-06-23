@@ -336,11 +336,10 @@ export const rejectPaymentRequest = async (req, res) => {
       const removedItem = userBeforeUpdate.inbox.find(
         (item) => item.id.toString() === expenseId.toString()
       );
-      const removedName = removedItem?.name;
       await sendPushNotification(
-        friend,
+        removedItem?.friend,
         "Payment Confirmed Rejected",
-        `Your payment request has been rejected by ${removedName}.`
+        `Your payment request has been rejected by ${removedItem?.name}.`
       );
     } catch (err) {
       console.log(`Push notification error: ${err.message}`);
