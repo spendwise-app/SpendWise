@@ -223,11 +223,17 @@ export const sharedExpenses = async (req, res) => {
       };
     });
 
+
+await Promise.all(
+  expense.sharedWith.map(async ({ friend }) => {
     await sendPushNotification(
-      req.userId,
-      "Shared Expense Alert",
-      `You have ${shared.length} shared expense(s).`
+      friend,
+      "New Shared Expense",
+      `${req.user.name} shared an expense with you.`
     );
+  })
+);
+
 
     res.json({ success: true, shared });
   } catch (err) {
