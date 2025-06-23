@@ -12,10 +12,8 @@ const sendPushNotification = async (userId, title, body) => {
 
   try {
     await webpush.sendNotification(subscription, notificationPayload);
-    res.status(200).json({ message: 'Notification sent' });
   } catch (err) {
     console.error('Error sending notification:', err);
-    res.status(500).json({ message: 'Error sending notification' });
   }
 }
 
