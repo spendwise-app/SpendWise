@@ -224,17 +224,6 @@ export const sharedExpenses = async (req, res) => {
     });
 
 
-await Promise.all(
-  shared.sharedWith.map(async ({ friend }) => {
-    await sendPushNotification(
-      friend,
-      "New Shared Expense",
-      `${req.user.name} shared an expense with you.`
-    );
-  })
-);
-
-
     res.json({ success: true, shared });
   } catch (err) {
     res.json({ success: false, message: err.message });
