@@ -1,12 +1,13 @@
 import { subscriptions, webpush } from "../config/webpush.js";
 
-const sendPushNotification = async (userId, title, body) => {
+const sendPushNotification = async (userId, title, body, url="") => {
   const subscription = subscriptions[userId];
   if (!subscription) return res.status(404).json({ message: 'Subscription not found' });
 
   const notificationPayload = JSON.stringify({
     title,
     body,
+    url,
     icon: '/icon-192.png',
   });
 

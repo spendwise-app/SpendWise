@@ -34,7 +34,8 @@ export const createExpense = async (req, res) => {
             "New Shared Expense",
             `${
               user.name || "A User"
-            } has shared an expense with you for ${amount}.`
+            } has shared an expense with you for ${amount}.`,
+            "shared"
           );
         } catch (notificationError) {
           console.error(

@@ -30,7 +30,8 @@ export const sendRequest = async (req, res) => {
     await sendPushNotification(
       receiver._id,
       "New Friend Request",
-      `You have a new friend request from ${sender?.name}`
+      `You have a new friend request from ${sender?.name}`,
+      "friends"
     );
   } catch (err) {
     console.log(`Push notification error: ${err.message}`);
