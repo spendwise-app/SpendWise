@@ -155,6 +155,8 @@ export const filterExpenses = async (req, res) => {
       groupByCategory,
       sortBy,
       order,
+      page = 1,
+      limit = 20,
     } = req.query;
 
     const userId = new mongoose.Types.ObjectId(String(req.userId));
@@ -187,7 +189,6 @@ export const filterExpenses = async (req, res) => {
     }
 
     let grouped;
-
     if (groupByCategory === "true") {
       grouped = await Expense.aggregate([
         { $match: filter },
@@ -202,26 +203,36 @@ export const filterExpenses = async (req, res) => {
           $sort: { totalAmount: order === "desc" ? -1 : 1 },
         },
       ]);
-
-      // return res.json({ success: true, grouped });
     }
 
     // Sorting
-    let sort = {};
-    if (sortBy) {
-      sort[sortBy] = order === "desc" ? -1 : 1;
-    } else {
-      sort.date = -1; // default: newest first
-    }
+    const sort = sortBy
+      ? { [sortBy]: order === "desc" ? -1 : 1 }
+      : { date: -1 };
 
-    const expenses = await Expense.find(filter).sort(sort);
-    const total = expenses.reduce((sum, i) => sum + i.amount, 0);
+    // Pagination
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+    const skip = (pageNum - 1) * limitNum;
+
+    const expenses = await Expense.find(filter)
+      .sort(sort)
+      .skip(skip)
+      .limit(limitNum);
+
+    const totalCount = await Expense.countDocuments(filter);
+    const totalAmount = await Expense.aggregate([
+      { $match: filter },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
 
     res.json({
       success: true,
       count: expenses.length,
-      total,
+      total: totalAmount[0]?.total || 0,
       grouped,
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalCount / limitNum),
       expenses,
     });
   } catch (error) {
@@ -229,6 +240,7 @@ export const filterExpenses = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
 
 export const sharedExpenses = async (req, res) => {
   try {
