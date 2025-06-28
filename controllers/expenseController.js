@@ -220,7 +220,7 @@ export const filterExpenses = async (req, res) => {
       .skip(skip)
       .limit(limitNum);
 
-    const totalCount = await Expense.countDocuments(filter);
+    const totalCount = await Expense.countDocuments();
     const totalAmount = await Expense.aggregate([
       { $match: filter },
       { $group: { _id: null, total: { $sum: "$amount" } } },
