@@ -228,7 +228,7 @@ export const filterExpenses = async (req, res) => {
 
     res.json({
       success: true,
-      count: expenses.length,
+      count: totalCount,
       total: totalAmount[0]?.total || 0,
       grouped,
       currentPage: pageNum,
