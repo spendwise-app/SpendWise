@@ -68,14 +68,18 @@ app.post('/api/subscribe', (req, res) => {
 });
 
 app.post('/api/notify', async (req, res) => {
-  const { userId } = req.body;
+  const { userId, password } = req.body;
+  if(!userId || !password)
+    return res.json({ message: "userId and password required"})
+  if(password !== process.env.TEST_PASS)
+    return res.status(404).json({ message: 'Invalid Password' });
   const subscription = subscriptions[userId];
   if (!subscription) return res.status(404).json({ message: 'Subscription not found' });
 
   const notificationPayload = JSON.stringify({
     title: 'Test Message',
     body: 'Hello World',
-    icon: '/icon-192.png',
+    icon: 'https://static.wikia.nocookie.net/naruto-onepiece-fairytail/images/5/5f/Monkey_D._Luffy.png',
   });
 
   try {
