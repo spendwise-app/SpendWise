@@ -6,8 +6,8 @@ import authRoutes from "./routes/authRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import borrowLendRoutes from "./routes/borrowLendRoutes.js";
-import friendRoutes from "./routes/friendRoutes.js"
-import feedbackRoute from "./routes/feedbackRoute.js"
+import friendRoutes from "./routes/friendRoutes.js";
+import feedbackRoute from "./routes/feedbackRoute.js";
 import cookieParser from "cookie-parser";
 import "./utilities/weeklySummary.js";
 import "./utilities/sleepPreventer.js";
@@ -29,7 +29,7 @@ const allowedOrigins = [
   "https://spendwise-test.deno.dev",
   "http://192.168.1.71:5174",
   "https://spendwise25.netlify.app",
-  "https://spendwise-web.netlify.app"
+  "https://spendwise-web.netlify.app",
 ];
 
 app.use(
@@ -54,44 +54,40 @@ app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/borrowlend", borrowLendRoutes);
-app.use("/api/friend", friendRoutes)
+app.use("/api/friend", friendRoutes);
 app.use("/api/feedback", feedbackRoute);
 
-
-
-
 // Push Notification
-app.post('/api/subscribe', (req, res) => {
+app.post("/api/subscribe", (req, res) => {
   const { userId, subscription } = req.body;
   subscriptions[userId] = subscription;
-  res.status(201).json({ message: 'Subscribed' });
+  res.status(201).json({ message: "Subscribed" });
 });
 
-app.post('/api/notify', async (req, res) => {
-  const { userId, password } = req.body;
-  if(!userId || !password)
-    return res.json({ message: "userId and password required"})
-  if(password !== process.env.TEST_PASS)
-    return res.status(404).json({ message: 'Invalid Password' });
+app.post("/api/notify", async (req, res) => {
+  const { userId, password, title = "Test message", body = "Hello World" } = req.body;
+  if (!userId || !password)
+    return res.json({ message: "userId and password required" });
+  if (password !== process.env.TEST_PASS)
+    return res.status(404).json({ message: "Invalid Password" });
   const subscription = subscriptions[userId];
-  if (!subscription) return res.status(404).json({ message: 'Subscription not found' });
+  if (!subscription)
+    return res.status(404).json({ message: "Subscription not found" });
 
   const notificationPayload = JSON.stringify({
-    title: 'Test Message',
-    body: 'Hello World',
-    icon: 'https://static.wikia.nocookie.net/naruto-onepiece-fairytail/images/5/5f/Monkey_D._Luffy.png',
+    title,
+    body,
+    icon: "https://static.wikia.nocookie.net/naruto-onepiece-fairytail/images/5/5f/Monkey_D._Luffy.png",
   });
 
   try {
     await webpush.sendNotification(subscription, notificationPayload);
-    res.status(200).json({ message: 'Notification sent' });
+    res.status(200).json({ message: "Notification sent" });
   } catch (err) {
-    console.error('Error sending notification:', err);
-    res.status(500).json({ message: 'Error sending notification' });
+    console.error("Error sending notification:", err);
+    res.status(500).json({ message: "Error sending notification" });
   }
-})
-
-
+});
 
 app.get("/ping", (req, res) => {
   res.json({ message: "Pinged" });
